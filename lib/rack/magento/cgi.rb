@@ -45,8 +45,16 @@ class Rack::Magento::Cgi
     cgi.environment['DOCUMENT_ROOT'] = @public_dir
     cgi.environment['SERVER_SOFTWARE'] = 'Rack Legacy'
 
-    #@todo: fix for other entrie point also.
-    cgi.environment['SCRIPT_FILENAME'] = @public_dir+'/index.php'
+    # Standard Magento entry points catered for
+    # @todo: ability to overload
+    cgi.environment['SCRIPT_FILENAME'] = case env['PATH_INFO']
+      when /\.php$/
+        @public_dir+env['PATH_INFO']
+      when /^\/api/
+        @public_dir+'/api.php'
+      else
+        @public_dir+'/index.php'
+    end
 
     # Workaround get magento to recognise request path
     # Mage_Core_Controller_Request_Http::getHttpHost() changes parent signature, so that zend router will not remove the
