@@ -41,7 +41,7 @@ class Rack::Magento::Cgi
     # Config CGI environment
 
     # PHP-CGI will refuse to run script without REDIRECT_STATUS set.
-    cgi.environment['REDIRECT_STATUS'] = 'test'
+    cgi.environment['REDIRECT_STATUS'] ||= env['REDIRECT_STATUS'] || "200"
     cgi.environment['DOCUMENT_ROOT'] = @public_dir
     cgi.environment['SERVER_SOFTWARE'] = 'Rack Legacy'
 
@@ -55,6 +55,9 @@ class Rack::Magento::Cgi
       else
         @public_dir+'/index.php'
     end
+
+    # Remove domain, which webrick puts into the request_uri.
+    env['REQUEST_URI'] = (%r{^\w+\://[^/]+(/.*|$)$} =~ env['REQUEST_URI']) ? $1 : env['REQUEST_URI']
 
     # Workaround get magento to recognise request path
     # Mage_Core_Controller_Request_Http::getHttpHost() changes parent signature, so that zend router will not remove the
