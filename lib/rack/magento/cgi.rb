@@ -47,14 +47,15 @@ class Rack::Magento::Cgi
 
     # Standard Magento entry points catered for
     # @todo: ability to overload
-    cgi.environment['SCRIPT_FILENAME'] = case env['PATH_INFO']
+    env['SCRIPT_NAME'] = case env['PATH_INFO']
       when /\.php$/
-        @public_dir+env['PATH_INFO']
+        env['PATH_INFO']
       when /^\/api/
-        @public_dir+'/api.php'
+        '/api.php'
       else
-        @public_dir+'/index.php'
+        '/index.php'
     end
+    cgi.environment['SCRIPT_FILENAME'] = @public_dir+env['SCRIPT_NAME']
 
     # Remove domain, which webrick puts into the request_uri.
     env['REQUEST_URI'] = (%r{^\w+\://[^/]+(/.*|$)$} =~ env['REQUEST_URI']) ? $1 : env['REQUEST_URI']
