@@ -60,11 +60,6 @@ class Rack::Magento::Cgi
     # Remove domain, which webrick puts into the request_uri.
     env['REQUEST_URI'] = (%r{^\w+\://[^/]+(/.*|$)$} =~ env['REQUEST_URI']) ? $1 : env['REQUEST_URI']
 
-    # Workaround get magento to recognise request path
-    # Mage_Core_Controller_Request_Http::getHttpHost() changes parent signature, so that zend router will not remove the
-    # port from the URI in Zend_Controller_Request_Http::setRequestUri()
-    cgi.environment['HTTP_X_ORIGINAL_URL'] = env['REQUEST_PATH']
-
     # Set Magento Dev Mode.
     cgi.environment['MAGE_IS_DEVELOPER_MODE'] = true
     env.each do |key, value|

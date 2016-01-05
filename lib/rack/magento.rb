@@ -11,4 +11,5 @@ module Rack
 end
 
 require 'rack/magento/cgi'
+require 'rack/magento/set_orig_uri'
 
